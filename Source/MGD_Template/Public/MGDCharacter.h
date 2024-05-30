@@ -19,7 +19,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Movement")
 	void Pure_MoveCharacter(const FVector2D Axis);
 
+
+    // rotate the character controller based on axis
+	UFUNCTION(BlueprintCallable, Category= "Controller")
+	void Pure_RotateController(const FVector2D Axis);
+	
+
 public:
 	// move axis of the character
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Movement")
 	FVector2D pMoveAxis; 
 };

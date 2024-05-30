@@ -27,6 +27,15 @@ void AMGDCharacter::Pure_MoveCharacter(const FVector2D Axis)
 	
 }
 
+void AMGDCharacter::Pure_RotateController(const FVector2D Axis)
+{
+    // Rotate controller yaw based on X axis
+	AddControllerYawInput(Axis.X);
+
+	// rotate controller pitch based on Y axis
+	AddControllerPitchInput(-Axis.Y);
+}
+
 	
 	
 	

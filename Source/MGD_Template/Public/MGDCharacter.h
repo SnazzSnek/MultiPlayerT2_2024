@@ -28,5 +28,12 @@ public:
 public:
 	// move axis of the character
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Movement")
-	FVector2D pMoveAxis; 
+	FVector2D pMoveAxis;
+
+	// replicated Pitch for character
+
+	UPROPERTY(BlueprintReadOnly, Category="Pitch")
+	float pRepPitch; 
+	
+	
 };

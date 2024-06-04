@@ -4,16 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "MGDCharacter.generated.h"
+#include "MGCharacter.generated.h"
 
-UCLASS()
-class MGD_TEMPLATE_API AMGDCharacter : public ACharacter
+	UCLASS()
+
+class MGD_TEMPLATE_API AMGCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AMGDCharacter();
+	AMGCharacter();
 
     // move the character based on an axis
 	UFUNCTION(BlueprintCallable, Category="Movement")
@@ -22,18 +23,29 @@ public:
 
     // rotate the character controller based on axis
 	UFUNCTION(BlueprintCallable, Category= "Controller")
-	void Pure_RotateController(const FVector2D Axis);
-	
+		void Pure_RotateController(const FVector2D Axis);
 
-public:
+		
+	protected:
+		UFUNCTION(Server, Reliable, Category= "Replication")
+		void Server_RepPitch(const float& Pitch);
+
+		UFUNCTION(NetMulticast, Reliable, Category= "Replication")
+		void Multi_RepPitch(const float& Pitch);
+
+
+	public:
 	// move axis of the character
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category= "Movement")
+
+	UPROPERTY(BlueprintReadOnly, Category="Movement")
 	FVector2D pMoveAxis;
 
 	// replicated Pitch for character
 
 	UPROPERTY(BlueprintReadOnly, Category="Pitch")
-	float pRepPitch; 
+	float pRepPitch;
+	
+	
 	
 	
 };

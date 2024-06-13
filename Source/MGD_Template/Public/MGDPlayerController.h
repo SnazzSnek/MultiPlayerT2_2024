@@ -22,6 +22,6 @@ public:
 
 protected:
 	UFUNCTION(BlueprintImplementableEvent, Category="Replication")
-	void PureOnRepPosses(APawn* PossesedPawn);
+	void Pure_OnRepPosess(APawn* PosessedPawn);
 	
 };

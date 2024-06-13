@@ -7,16 +7,13 @@ void AMGDPlayerController::OnRep_Pawn()
 {
 	Super::OnRep_Pawn();
 
-	PureOnRepPosses(GetPawn());
+	Pure_OnRepPosess(GetPawn());
 }
 
 void AMGDPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
-	PureOnRepPosses(InPawn);
-
-
-
-	
+	Pure_OnRepPosess(InPawn);
+		
 }

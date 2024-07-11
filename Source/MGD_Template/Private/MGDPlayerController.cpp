@@ -7,13 +7,16 @@ void AMGDPlayerController::OnRep_Pawn()
 {
 	Super::OnRep_Pawn();
 
+	UE_LOG(LogTemp, Warning, TEXT("On Posses"))
+
 	Pure_OnRepPosess(GetPawn());
 }
 
 void AMGDPlayerController::OnPossess(APawn* InPawn)
 {
-	Super::OnPossess(InPawn);
+	Super::OnPossess(InPawn);	
 
-	Pure_OnRepPosess(InPawn);
+	if(HasAuthority())
+		Pure_OnRepPosess(InPawn);
 		
 }

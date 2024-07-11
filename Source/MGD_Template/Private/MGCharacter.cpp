@@ -22,7 +22,7 @@ void AMGCharacter::Pure_MoveCharacter(const FVector2D Axis)
 	// move character based on Y axis
 	   AddMovementInput(GetActorRotation().Vector(),Axis.Y);
 
-	// move character based on X axis
+	// move character based on X axis	
 	   AddMovementInput(FRotationMatrix(GetActorRotation()).GetScaledAxis(EAxis::Y),Axis.X);
 
 	

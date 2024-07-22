@@ -16,4 +16,10 @@ class MGD_TEMPLATE_API AMGGameMode_Lobby : public AGameMode
 
 protected:
 	virtual void OnPostLogin(AController* NewPlayer) override;
+
+
+
+
+
+	
 };

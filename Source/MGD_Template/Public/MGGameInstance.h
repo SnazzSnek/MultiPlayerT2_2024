@@ -26,7 +26,15 @@ public:
 
 	UFUNCTION(BlueprintPure,Category="User")
 	FString GetDisplayName() const;
+
 	
+
+	UFUNCTION(BlueprintPure,Category="Sessions")
+	bool IsInSession() const;
+
+// hosts a game using EOS, currently only LAN capable 
+	UFUNCTION(BlueprintCallable,Category="Sessions")
+	void HostGame(bool lan = true);
 
 
 
@@ -35,11 +43,16 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category="Login")
 	void OnLoginComplete(bool success,const FString& error);
 
+	UFUNCTION(BlueprintImplementableEvent,Category="Session")
+	void OnSessionCreateComplete(FName SessionName, bool bWasSucessful);
+	
 	
 	// only this class can run private
     private:
 	// runs when EOS login completes
 	void EOSLoginComplete(int32  LocalUserNum,bool bWasSuccessful, const FUniqueNetId& UserId, const FString& Error);
+
+	void SessionCreateComplete(FName SessionName, bool bWasSuccesful);
 	
 	
 };

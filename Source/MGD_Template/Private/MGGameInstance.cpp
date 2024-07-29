@@ -4,6 +4,11 @@
 #include "MGGameInstance.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
+#include "Interfaces/OnlineSessionInterface.h"
+#include "OnlineSessionSettings.h"
+#include "Online/OnlineSessionNames.h"
+
+#define MGSESSION_NAME FName(TEXT("MGSESSION"))
 
 void UMGGameInstance::Init()
 {
@@ -31,6 +36,16 @@ void UMGGameInstance::Init()
 
 	// binding the login complete function to login complete, in the identity interface 
 	identityRef->OnLoginCompleteDelegates->AddUObject(this, &UMGGameInstance::EOSLoginComplete);
+
+
+
+	const IOnlineSessionPtr sessionRef = ossRef->GetSessionInterface();
+
+
+	if (!sessionRef)
+		return;
+
+	sessionRef->OnCreateSessionCompleteDelegates.AddUObject(this, )
 
 	
 }
@@ -107,8 +122,64 @@ FString UMGGameInstance::GetDisplayName() const
 	return identityRef->GetPlayerNickname(0);
 }
 
+bool UMGGameInstance::IsInSession() const
+{
+	if(!IsLoggedIn())
+		return false;
+
+	
+   // get the interface that interacts with sessions, so we can get session data
+	const IOnlineSessionPtr sessionRef = Online::GetSubsystem(GetWorld())->GetSessionInterface();
+
+	// make sure there is a session interface
+	if (!sessionRef)
+		return false;
+
+	// get and locally store the session state
+	EOnlineSessionState:: Type state = sessionRef->GetSessionState(MGSESSION_NAME) ;
+
+	// if there is a session return true
+	return state != EOnlineSessionState::NoSession;
+
+	
+	
+}
+
+void UMGGameInstance::HostGame(bool lan)
+{
+	// are we logged in
+	if (!IsLoggedIn())
+		return;
+
+	// get session interface
+	const IOnlineSessionPtr sessionRef =Online::GetSubsystem(GetWorld())->GetSessionInterface();
+
+	if (!sessionRef)
+		return;
+
+	//define the settings of the session
+	FOnlineSessionSettings settings;
+	settings.NumPublicConnections = 4;
+	settings.bIsLANMatch = lan;
+	settings.bIsDedicated = false;
+	settings.bAllowInvites = true;
+	settings.bShouldAdvertise = true;
+	settings.bUseLobbiesIfAvailable = true;
+	settings.bUsesPresence = true;
+	settings.Set(SEARCH_KEYWORDS, MGSESSION_NAME.ToString(), EOnlineDataAdvertisementType::ViaOnlineService);
+
+
+	// create the session using the settings and name we created
+	sessionRef->CreateSession(0, MGSESSION_NAME, settings);
+}
+
 void UMGGameInstance::EOSLoginComplete(int32 LocalUserNum, bool bWasSuccessful, const FUniqueNetId& UserId,
                                        const FString& Error)
 {
 	OnLoginComplete(bWasSuccessful, Error);
+}
+
+void UMGGameInstance::SessionCreateComplete(FName SessionName, bool bWasSuccesful)
+{
+	
 }

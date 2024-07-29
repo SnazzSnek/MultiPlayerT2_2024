@@ -45,7 +45,7 @@ void UMGGameInstance::Init()
 	if (!sessionRef)
 		return;
 
-	sessionRef->OnCreateSessionCompleteDelegates.AddUObject(this, )
+	sessionRef->OnCreateSessionCompleteDelegates.AddUObject(this, & UMGGameInstance::SessionCreateComplete);
 
 	
 }
@@ -179,7 +179,8 @@ void UMGGameInstance::EOSLoginComplete(int32 LocalUserNum, bool bWasSuccessful, 
 	OnLoginComplete(bWasSuccessful, Error);
 }
 
-void UMGGameInstance::SessionCreateComplete(FName SessionName, bool bWasSuccesful)
+void UMGGameInstance::SessionCreateComplete(FName SessionName, bool bWasSuccessful)
 {
-	
+	EnableListenServer(true);
+	OnSessionCreateComplete(bWasSuccessful);
 }

@@ -45,7 +45,7 @@ void UMGGameInstance::Init()
 	if (!sessionRef)
 		return;
 
-	sessionRef->OnCreateSessionCompleteDelegates.AddUObject(this, & UMGGameInstance::SessionCreateComplete);
+	sessionRef->OnCreateSessionCompleteDelegates.AddUObject(this, & UMGGameInstance::OnSessionCreateComplete);
 
 	
 }

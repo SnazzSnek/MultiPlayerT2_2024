@@ -4,11 +4,18 @@
 #include "MGGameInstance.h"
 #include "OnlineSubsystem.h"
 #include "OnlineSubsystemUtils.h"
-#include "Interfaces/OnlineSessionInterface.h"
-#include "OnlineSessionSettings.h"
+#include "GameFramework/GameModeBase.h"
 #include "Online/OnlineSessionNames.h"
 
 #define MGSESSION_NAME FName(TEXT("MGSESSION"))
+
+UMGGameInstance::UMGGameInstance()
+{
+	FoundSessions = MakeShareable(new FOnlineSessionSearch());
+	FoundSessions->MaxSearchResults = 10;
+	FoundSessions->bIsLanQuery = true;
+	FoundSessions->QuerySettings.Set(SEARCH_LOBBIES, true, EOnlineComparisonOp::Equals);
+}
 
 void UMGGameInstance::Init()
 {
@@ -45,7 +52,14 @@ void UMGGameInstance::Init()
 	if (!sessionRef)
 		return;
 
-	sessionRef->OnCreateSessionCompleteDelegates.AddUObject(this, & UMGGameInstance::OnSessionCreateComplete);
+	// binding our session create complete function to the create session complete delegate
+	// when a succession is created (success or fail) this function will run
+	sessionRef->OnCreateSessionCompleteDelegates.AddUObject(this, &UMGGameInstance::SessionCreateComplete);
+
+	// when a find session function has been called wait for it to complete and run the attached bound function
+	sessionRef->OnFindSessionsCompleteDelegates.AddUObject(this,&UMGGameInstance::SessionFindComplete);
+
+	sessionRef->OnJoinSessionCompleteDelegates.AddUObject(this, &UMGGameInstance::SessionJoinComplete);
 
 	
 }
@@ -167,10 +181,33 @@ void UMGGameInstance::HostGame(bool lan)
 	settings.bUseLobbiesIfAvailable = true;
 	settings.bUsesPresence = true;
 	settings.Set(SEARCH_KEYWORDS, MGSESSION_NAME.ToString(), EOnlineDataAdvertisementType::ViaOnlineService);
+	settings.Set(SEARCH_LOBBIES, true, EOnlineDataAdvertisementType::ViaOnlineService);
 
 
 	// create the session using the settings and name we created
 	sessionRef->CreateSession(0, MGSESSION_NAME, settings);
+}
+
+void UMGGameInstance::FindAndJoinSession()
+{
+	// make sure we're logged in
+
+	if (!IsLoggedIn())
+		return;
+
+	const IOnlineSessionPtr sessionRef = Online::GetSubsystem(GetWorld())->GetSessionInterface();
+
+	if(!sessionRef)
+		return;
+
+	// finding a session based on found session query settings
+	sessionRef->FindSessions(0, FoundSessions.ToSharedRef());
+}
+
+void UMGGameInstance::StartLobbyGame()
+{
+	GetWorld()->GetAuthGameMode()->bUseSeamlessTravel = true;
+	GetWorld()->ServerTravel("/Game/MyContent/Maps/Lvl_Test", false);
 }
 
 void UMGGameInstance::EOSLoginComplete(int32 LocalUserNum, bool bWasSuccessful, const FUniqueNetId& UserId,
@@ -184,3 +221,51 @@ void UMGGameInstance::SessionCreateComplete(FName SessionName, bool bWasSuccessf
 	EnableListenServer(true);
 	OnSessionCreateComplete(bWasSuccessful);
 }
+
+void UMGGameInstance::SessionFindComplete(bool bWasSuccessful)
+{
+	if(!bWasSuccessful)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to find sessions"))
+		OnSessionJoinComplete(false);
+		return;
+	}
+
+	const IOnlineSubsystem* ossRef = Online::GetSubsystem(GetWorld());
+
+	if(!ossRef)
+		return;
+
+	const IOnlineSessionPtr sessionRef = ossRef->GetSessionInterface();
+
+	if(!sessionRef)
+		return;
+
+	// making sure we found sessions
+	if(!FoundSessions->SearchResults.IsEmpty())
+	{
+		UE_LOG(LogTemp, Error, TEXT("No sessions found"))
+		OnSessionJoinComplete(false);
+		return;
+	}
+
+	UE_LOG(LogTemp, Warning, TEXT("found session attempting to join"))
+	// join the session that is the first session found
+	sessionRef->JoinSession(0,MGSESSION_NAME, FoundSessions->SearchResults[0]);
+}
+
+void UMGGameInstance::SessionJoinComplete(FName SessionName, EOnJoinSessionCompleteResult::Type Result)
+{
+	OnSessionJoinComplete(Result == EOnJoinSessionCompleteResult::Success);
+	
+	if(Result != EOnJoinSessionCompleteResult::Success)
+	{
+		UE_LOG(LogTemp,Error, TEXT("Failed to join session"))
+		return;
+	}
+
+	// automatically get the ip address and remote location and travel the client to the game
+	ClientTravelToSession(0, SessionName);
+}
+
+

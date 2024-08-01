@@ -52,7 +52,7 @@ void UMGGameInstance::Init()
 	if (!sessionRef)
 		return;
 
-	// binding our session create complete function to the create session complete delegate
+	// binding our session create complete function to the Create session complete delegate
 	// when a succession is created (success or fail) this function will run
 	sessionRef->OnCreateSessionCompleteDelegates.AddUObject(this, &UMGGameInstance::SessionCreateComplete);
 
@@ -242,7 +242,7 @@ void UMGGameInstance::SessionFindComplete(bool bWasSuccessful)
 		return;
 
 	// making sure we found sessions
-	if(!FoundSessions->SearchResults.IsEmpty())
+	if(FoundSessions->SearchResults.IsEmpty())
 	{
 		UE_LOG(LogTemp, Error, TEXT("No sessions found"))
 		OnSessionJoinComplete(false);

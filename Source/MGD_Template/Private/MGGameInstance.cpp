@@ -207,7 +207,7 @@ void UMGGameInstance::FindAndJoinSession()
 void UMGGameInstance::StartLobbyGame()
 {
 	GetWorld()->GetAuthGameMode()->bUseSeamlessTravel = true;
-	GetWorld()->ServerTravel("/Game/MyContent/Maps/Lvl_Test", false);
+	GetWorld()->ServerTravel("/Game/MyContent/Maps/Lvl_Skirmish", false);
 }
 
 void UMGGameInstance::EOSLoginComplete(int32 LocalUserNum, bool bWasSuccessful, const FUniqueNetId& UserId,

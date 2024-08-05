@@ -49,6 +49,8 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Sessions")
 	void StartLobbyGame();
 
+	UFUNCTION(BlueprintCallable,Category="Session")
+	void EndLobbyGame();
 
 	// keyword only allows this class and derived/ child classes to run functions
     protected:

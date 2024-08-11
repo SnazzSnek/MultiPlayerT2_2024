@@ -31,13 +31,13 @@ void AMGGameMode_Lobby::OnPostLogin(AController* NewPlayer)
 			int playerStartIndex = 1;
 			
 			// assigning an index depending on the following 
+		
 			if(psRef->PlayerStartTag == FName("Player2"))
-             playerStartIndex = 2;
-             else if(psRef->PlayerStartTag == FName("Player3"))
-             	playerStartIndex = 3;
-             	else if (psRef->PlayerStartTag == FName("Player4"))
-             		playerStartIndex = 4;
-			
+				playerStartIndex = 2;
+			else if(psRef->PlayerStartTag == FName("Player3"))
+				playerStartIndex = 3;
+			else if (psRef->PlayerStartTag == FName("Player4"))
+				playerStartIndex = 4;
              		
 			// getting the number of players in a game, 
 			int32 numPlayers = UGameplayStatics:: GetNumPlayerStates(GetWorld());

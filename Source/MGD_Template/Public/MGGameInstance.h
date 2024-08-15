@@ -47,8 +47,14 @@ public:
 
 	// start a lobby game if one exists
 	UFUNCTION(BlueprintCallable,Category="Sessions")
-	void StartLobbyGame();
+	void StartLobbyGameSkirmish();
 
+
+	// function for starting lobby game, to play the skyscraper map
+	UFUNCTION(BlueprintCallable,Category="Sessions")
+	void StartLobbyGameSkyscraper();
+
+	
 	UFUNCTION(BlueprintCallable,Category="Session")
 	void EndLobbyGame();
 

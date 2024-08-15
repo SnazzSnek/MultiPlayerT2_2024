@@ -204,10 +204,16 @@ void UMGGameInstance::FindAndJoinSession()
 	sessionRef->FindSessions(0, FoundSessions.ToSharedRef());
 }
 
-void UMGGameInstance::StartLobbyGame()
+void UMGGameInstance::StartLobbyGameSkirmish()
 {
 	GetWorld()->GetAuthGameMode()->bUseSeamlessTravel = true;
 	GetWorld()->ServerTravel("/Game/MyContent/Maps/Lvl_Skirmish", false);
+}
+
+void UMGGameInstance::StartLobbyGameSkyscraper()
+{
+	GetWorld()->GetAuthGameMode()->bUseSeamlessTravel = true;
+	GetWorld()->ServerTravel("/Game/MyContent/Maps/Lvl_SkyScraper", false);
 }
 
 void UMGGameInstance::EndLobbyGame()
